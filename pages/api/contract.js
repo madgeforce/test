@@ -3,12 +3,12 @@ import path from 'path';
 import fs from 'fs';
 
 export default async function handler(req, res) {
+  try {
+
+
     // Extract the HTML string from the request body
     const { html } = req.body;
-    const imagePath = path.join(process.cwd(), 'public', 'assets', 'images', 'brands', 'OChEn.svg');
-    const imageData = fs.readFileSync(imagePath);
-    const imageBase64 = imageData.toString('base64');
-    const imageUrl = `data:image/svg+xml;base64,${imageBase64}`;
+
     // Define the @font-face rule and add it to the HTML string
     const htmlWithFont = `
     <html>
@@ -37,17 +37,27 @@ export default async function handler(req, res) {
       </style>
       </head>
       <body>
-       ${html?.replace("/assets/images/brands/OChEn.svg", imageUrl)}
+       hello
       </body>
       </html>
     `;
     // Launch a new headless browser instance
-    const browser = await puppeteer.launch({ headless: "new" });
+    const browser = await puppeteer.launch({
+      args: [
+        '--ignore-certificate-errors',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--window-size=1920,1080',
+        "--disable-accelerated-2d-canvas",
+        "--disable-gpu"],
+      ignoreHTTPSErrors: true,
+    });
 
     // Create a new page
     const page = await browser.newPage();
 
     // Set the page content to the HTML string
+    console.log(htmlWithFont);
     await page.setContent(htmlWithFont);
 
     // Generate a PDF from the page content
@@ -60,4 +70,8 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=download.pdf');
     res.send(pdfBuffer);
+  } catch (error) {
+    res.send(error.toString());
+
+  }
 }
