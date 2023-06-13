@@ -42,16 +42,8 @@ export default async function handler(req, res) {
       </html>
     `;
     // Launch a new headless browser instance
-    const browser = await puppeteer.launch({
-      args: [
-        '--ignore-certificate-errors',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--window-size=1920,1080',
-        "--disable-accelerated-2d-canvas",
-        "--disable-gpu"],
-      ignoreHTTPSErrors: true,
-    });
+    const browser = await puppeteer.launch({ headless: "new" });
+
 
     // Create a new page
     const page = await browser.newPage();
