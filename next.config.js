@@ -1,7 +1,5 @@
-/** @type {import('next').NextConfig} */
+const withOffline = require('next-offline')
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  // your Next.js config
 }
-
-module.exports = nextConfig
+module.exports = withOffline(nextConfig)
